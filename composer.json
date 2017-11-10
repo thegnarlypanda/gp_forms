@@ -1,0 +1,11 @@
+{
+    "name": "giantpeach/gp_forms",
+    "type": "wordpress-plugin",
+    "repositories": [{
+        "type": "vcs",
+        "url": "git@bitbucket.org:giantpeach/gp_forms.git"
+    }],
+    "require": {
+        "respect/validation": "^1.1"
+    }
+}

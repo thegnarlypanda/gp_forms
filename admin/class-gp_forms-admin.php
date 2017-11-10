@@ -55,6 +55,75 @@ class Gp_forms_Admin {
 	}
 
 	/**
+	 * Register custom post type.
+	 *
+	 * @since    1.0.0
+	 */
+	public static function gp_register_post_type() {
+
+		register_post_type('gp_forms',
+			array(
+				'labels' => array(
+				'name' => __( 'Form Entries' ),
+				'singular_name' => __( 'Form Entry' ),
+				'add_new_item' => "Add New Form Entry",
+				'edit_item' => "Edit Form Entry",
+			),
+			'supports' => array(
+				'title'
+			),
+			'menu_icon' => 'dashicons-admin-users',
+			'show_in_rest' => false,
+			'public' => true,
+			'has_archive' => false,
+			'publicly_queryable'  => false,
+			)
+		);
+
+		register_taxonomy( "form", "gp_forms", array(
+			'labels' => array(
+				'name' => 'Forms',
+				'singular_name' => 'Form',
+				'new_item_name' => 'Form',
+				'add_new_item' => 'Add New Form',
+				'edit_item' => 'Edit Form'
+			),
+			'hierarchical' => true
+		) );
+	}
+
+	public static function gp_add_metabox() {
+		add_meta_box( 'gp_forms_entry', 'Entry', array(get_called_class(), 'gp_populate_metabox'), 'gp_forms', 'normal', 'high' );		
+	}
+
+	public static function gp_populate_metabox() {
+		global $post;
+		global $wpdb;
+		$table_name = $wpdb->prefix . "gp_forms_entires";
+		$results = $wpdb->get_results(
+			$wpdb->prepare("SELECT * FROM $table_name WHERE entry_id=%d", $post->ID)
+		);
+		
+		foreach ($results as $result) {
+			echo $result->field . ": " . $result->value . "<br>";
+		}
+	}
+
+	/**
+	 * Register rest api endpoint.
+	 *
+	 * @since    1.0.0
+	 */
+	public static function gp_register_endpoint() {
+
+		register_rest_route( 'gp_forms/v1', '/submit', array(
+			'methods' => 'GET',
+			'callback' => array( $plugin_public, 'gp_form_submit' )
+		) );
+
+	}
+
+	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    1.0.0

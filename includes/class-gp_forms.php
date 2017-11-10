@@ -75,7 +75,6 @@ class Gp_forms {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -119,7 +118,12 @@ class Gp_forms {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-gp_forms-public.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-gp_forms-rest.php';
+
+
 		$this->loader = new Gp_forms_Loader();
+
+		$this->rest = new Gp_forms_Rest();
 
 	}
 
@@ -154,6 +158,10 @@ class Gp_forms {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'init', $plugin_admin, 'gp_register_post_type' );
+		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'gp_add_metabox' );
+		// $this->loader->add_action( 'rest_api_init', $plugin_admin, 'gp_register_endpoint' );
+
 	}
 
 	/**
@@ -167,8 +175,13 @@ class Gp_forms {
 
 		$plugin_public = new Gp_forms_Public( $this->get_plugin_name(), $this->get_version() );
 
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'register_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'localize_scripts' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+
+		$this->loader->add_filter( 'test', $plugin_public, 'add_to_form_array', 10, 1 );
+
 
 	}
 

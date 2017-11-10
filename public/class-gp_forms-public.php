@@ -96,8 +96,44 @@ class Gp_forms_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/gp_forms-public.js', array( 'jquery' ), $this->version, false );
+		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/gp_forms-public.js', array( 'jquery' ), $this->version, false );
 
+		wp_enqueue_script( 'gp_forms' );
+
+	}
+
+	public function add_to_form_array() {
+		echo "test";
+	}
+
+	/**
+	 * Register the JavaScript for the public-facing side of the site.
+	 *
+	 * @since    1.0.0
+	 */
+	public function register_scripts() {
+
+		wp_register_script( 'gp_forms', plugin_dir_url( __FILE__ ) . 'js/gp_forms.js' );
+
+	}
+
+	/**
+	 * Register the JavaScript for the public-facing side of the site.
+	 *
+	 * @since    1.0.0
+	 */
+	public function localize_scripts() {
+
+		wp_localize_script( 'gp_forms', 'nonce', [ 'gp_forms/v1', wp_create_nonce( 'wp_rest' ) ] );
+
+	}
+
+	public function gp_form_submit() {
+		if ( !check_ajax_referer( 'wp_rest', '_wpnonce', false ) ) {
+			echo 'kys';
+		} else {
+			echo "something";
+		}
 	}
 
 }

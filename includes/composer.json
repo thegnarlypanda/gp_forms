@@ -1,0 +1,8 @@
+{
+    "name": "giantpeach/gp_forms",
+    "type": "wordpress-plugin",
+    "repositories": [{
+        "type": "vcs",
+        "url": "git@bitbucket.org:giantpeach/gravityforms.git"
+    }]
+}

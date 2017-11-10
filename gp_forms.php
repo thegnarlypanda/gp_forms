@@ -13,7 +13,7 @@
  * @package           Gp_forms
  *
  * @wordpress-plugin
- * Plugin Name:       GP_Forms
+ * Plugin Name:       Giant Peach Forms
  * Plugin URI:        http://giantpeach.agency
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
  * Version:           1.0.0
