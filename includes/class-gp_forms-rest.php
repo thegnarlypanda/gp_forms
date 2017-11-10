@@ -9,7 +9,7 @@
         public function __construct() {
             $this->namespace = "gp_forms/v1";
 
-            require_once __DIR__ . 'vendor/autoload.php';
+            require_once __DIR__ . '/vendor/autoload.php';
 
             add_action( 'rest_api_init', [$this, 'register_routes'] );
         }
