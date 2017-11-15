@@ -8,8 +8,8 @@
             $this->namespace = "gp_forms/v1";
 
             // require_once __DIR__ . '/vendor/autoload.php';
-            require_once realpath(dirname(__FILE__)).'../../vendor/autoload.php';
-
+            require_once realpath(dirname(__FILE__)).'../../../../../vendor/autoload.php';
+            
             include get_template_directory() . '/gp_forms/forms.php';
 
             $this->forms = $forms;
