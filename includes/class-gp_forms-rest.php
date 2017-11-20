@@ -8,6 +8,7 @@
             $this->namespace = "gp_forms/v1";
 
             // require_once __DIR__ . '/vendor/autoload.php';
+            // require_once realpath(dirname(__FILE__)).'../../vendor/autoload.php';
             require_once realpath(dirname(__FILE__)).'/../../../../../vendor/autoload.php';
             
             include get_template_directory() . '/gp_forms/forms.php';
@@ -35,6 +36,8 @@
                         $formSlug = $form['form_slug'];
                         $tmpFields = $form['fields'];
                         $tmpValidation = $form['validation'];
+                        $tmpErrors = $form['errors'];
+                        $errorMessage = $form['mainError'];
                         // print_r("form exist");
                     }
                 }
@@ -56,9 +59,11 @@
                     ); 
                 } catch ( NestedValidationException $ex ) {
                     // print_r($ex->getMessages());
+                    $errorKey = array_keys($tmpErrors);
                     return array (
                         'hasErrors' => true,
-                        'errors' => $ex->getMessages()
+                        'errors' => $ex->findMessages($errorKey),
+                        'mainError' => $errorMessage
                     );
                 }
                 

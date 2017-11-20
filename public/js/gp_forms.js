@@ -162,10 +162,20 @@ Form.prototype.submit = function (e) {
         var alertZone = that.form.querySelector(".form__alert-zone");
         if (response.hasErrors) {
             alertZone.innerHTML = "";
-            for (var i = 0; i < response.errors.length; i++) {
-                that.createAlert("danger", response.errors[i]);
-                that.scroll(window.scrollY, that.form.offsetTop, 2);
+            that.createAlert("danger", response.mainError);
+            that.scroll(window.scrollY, that.form.offsetTop, 2);
+
+            for (var obj in response.errors) {
+                if (response.errors[obj] !== "") {
+                    var tmp = document.querySelector("[name='" + obj + "']");
+                    tmp.parentElement.classList.add("is-error");
+                }
             }
+
+            // for (var i = 0; i < response.errors.length; i++) {
+            //     that.createAlert("danger", response.errors[i]);
+            //     that.scroll(window.scrollY, that.form.offsetTop, 2);
+            // }
         } else {
             alertZone.innerHTML = "";
 
