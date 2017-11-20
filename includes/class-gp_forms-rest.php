@@ -38,6 +38,11 @@
                         $tmpValidation = $form['validation'];
                         $tmpErrors = $form['errors'];
                         $errorMessage = $form['mainError'];
+                        if (isset($form['email'])) {
+                            $notificationEmail = $form['email'];
+                        } else {
+                            $notificationEmail = get_option( 'admin_email' );
+                        }
                         // print_r("form exist");
                     }
                 }
@@ -52,7 +57,7 @@
                 try {
                     $tmpValidation->assert($formData); 
                     $this->process_data( $formData, $tmpFields, $formSlug );
-                    $this->notify_admin( $formData, $formName );
+                    $this->notify_admin( $formData, $formName, $notificationEmail );
 
                     return array(
                         'hasErrors' => false
@@ -107,7 +112,7 @@
             return false;
         }
 
-        public function notify_admin( $data, $formName ) {
+        public function notify_admin( $data, $formName, $notificationEmail ) {
             add_filter( 'wp_mail_content_type', array( $this, "set_to_html" ) );
             
             $headers[] = "From: Website <herrow@giantpeach.agency>";
@@ -119,7 +124,9 @@
                 $body .=  "<strong>" . $keys[$i] . ":</strong> " . $data[$keys[$i]] . "<br>";
             }
 
-            wp_mail( get_option( 'admin_email' ), "Form Entry - " . $formName, $body );
+
+
+            wp_mail( $notificationEmail, "Form Entry - " . $formName, $body );
 
             remove_filter( 'wp_mail_content_type', array( $this, "set_to_html" ) );
         }
