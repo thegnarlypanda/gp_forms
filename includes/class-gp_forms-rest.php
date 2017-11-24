@@ -7,9 +7,12 @@
         public function __construct() {
             $this->namespace = "gp_forms/v1";
 
-            // require_once __DIR__ . '/vendor/autoload.php';
-            // require_once realpath(dirname(__FILE__)).'../../vendor/autoload.php';
-            require_once realpath(dirname(__FILE__)).'/../../../../../vendor/autoload.php';
+            if (file_exists(realpath(dirname(__FILE__)).'/../../../../../vendor/autoload.php')) {
+                require_once realpath(dirname(__FILE__)).'/../../../../../vendor/autoload.php';
+            }
+            else {
+                require_once realpath(dirname(__FILE__)).'../../vendor/autoload.php';
+            }
             
             include get_template_directory() . '/gp_forms/forms.php';
 
@@ -43,7 +46,17 @@
                         } else {
                             $notificationEmail = get_option( 'admin_email' );
                         }
-                        // print_r("form exist");
+                        if (isset($form['from'])) {
+                            $from = array(
+                                'email' => $form['from']['email'],
+                                'name' => $form['from']['name']
+                            );
+                        } else {
+                            $from = array(
+                                'email' => get_option( 'admin_email' ),
+                                'name' => get_bloginfo( 'name' )
+                            );
+                        }
                     }
                 }
 
@@ -57,7 +70,7 @@
                 try {
                     $tmpValidation->assert($formData); 
                     $this->process_data( $formData, $tmpFields, $formSlug );
-                    $this->notify_admin( $formData, $formName, $notificationEmail );
+                    $this->notify_admin( $formData, $formName, $notificationEmail, $from );
 
                     return array(
                         'hasErrors' => false
@@ -92,7 +105,10 @@
             $table_name = $wpdb->prefix . "gp_forms_entires";
             $keys = array_keys( $data );      
 
-            $new_id = wp_insert_post( array( 'post_type' => 'gp_forms', 'post_title' => $data[$keys[0]] ) );
+            $post_title = $data['name'];
+            if (isset($data['subject'])) $post_title .= " - " . $data['subject'];
+
+            $new_id = wp_insert_post( array( 'post_type' => 'gp_forms', 'post_title' => $post_title ) );
 
             wp_set_object_terms( $new_id, $formSlug, 'form' );
 
@@ -112,10 +128,13 @@
             return false;
         }
 
-        public function notify_admin( $data, $formName, $notificationEmail ) {
+        public function notify_admin( $data, $formName, $notificationEmail, $from ) {
             add_filter( 'wp_mail_content_type', array( $this, "set_to_html" ) );
             
-            $headers[] = "From: Website <herrow@giantpeach.agency>";
+            $headers[] = "From: " . $from['name'] .  " <" . $from['email'] . ">";
+
+            $subject = "Website Form Submission - " . $formName;
+            if (isset($data['subject'])) $subject .= " - " . $data['subject'];
 
             $body = "";
             $keys = array_keys( $data );
@@ -124,9 +143,7 @@
                 $body .=  "<strong>" . $keys[$i] . ":</strong> " . $data[$keys[$i]] . "<br>";
             }
 
-
-
-            wp_mail( $notificationEmail, "Form Entry - " . $formName, $body );
+            wp_mail( $notificationEmail, $subject, $body, $headers );
 
             remove_filter( 'wp_mail_content_type', array( $this, "set_to_html" ) );
         }

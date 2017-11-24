@@ -88,6 +88,7 @@ class Gp_forms_Admin {
 				'add_new_item' => 'Add New Form',
 				'edit_item' => 'Edit Form'
 			),
+			'show_admin_column' => true,
 			'hierarchical' => true
 		) );
 	}
