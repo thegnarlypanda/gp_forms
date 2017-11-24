@@ -146,7 +146,7 @@
             $keys = array_keys( $data );
 
             for ( $i = 0; $i < count($keys); $i++ ) {
-                $body .=  "<strong>" . $keys[$i] . ":</strong> " . $data[$keys[$i]] . "<br>";
+                $body .=  "<strong>" . $keys[$i] . ":</strong> " . nl2br($data[$keys[$i]]) . "<br>";
             }
 
             wp_mail( $notificationEmail, $subject, $body, $headers );

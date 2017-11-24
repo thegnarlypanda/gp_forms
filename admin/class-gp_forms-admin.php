@@ -106,7 +106,7 @@ class Gp_forms_Admin {
 		);
 		
 		foreach ($results as $result) {
-			echo $result->field . ": " . $result->value . "<br>";
+			echo $result->field . ": " . nl2br($result->value) . "<br>";
 		}
 	}
 
