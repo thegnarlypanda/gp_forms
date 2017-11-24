@@ -112,7 +112,7 @@
             $keys = array_keys( $data );      
 
             $post_title = $data['name'];
-            if (isset($data['subject'])) $post_title .= " - " . $data['subject'];
+            if (isset($data['subject']) && !empty($data['subject'])) $post_title .= " - " . $data['subject'];
 
             $new_id = wp_insert_post( array( 'post_type' => 'gp_forms', 'post_title' => $post_title ) );
 
@@ -140,7 +140,7 @@
             $headers[] = "From: " . $from['name'] .  " <" . $from['email'] . ">";
 
             $subject = "Website Form Submission - " . $formName;
-            if (isset($data['subject'])) $subject .= " - " . $data['subject'];
+            if (isset($data['subject']) && !empty($data['subject'])) $subject .= " - " . $data['subject'];
 
             $body = "";
             $keys = array_keys( $data );
