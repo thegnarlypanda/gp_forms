@@ -41,12 +41,17 @@
                         $tmpValidation = $form['validation'];
                         $tmpErrors = $form['errors'];
                         $errorMessage = $form['mainError'];
-                        if (isset($form['email'])) {
+                        if (isset($form['successMessage'])) {
+                            $successMessage = $form['successMessage'];
+                        } else {
+                            $successMessage = 'Form submitted successfully.';
+                        }
+                        if (isset($form['email']) && !empty($form['email'])) {
                             $notificationEmail = $form['email'];
                         } else {
                             $notificationEmail = get_option( 'admin_email' );
                         }
-                        if (isset($form['from'])) {
+                        if (isset($form['from']) && !empty($form['from']['email']) && !empty($form['from']['name'])) {
                             $from = array(
                                 'email' => $form['from']['email'],
                                 'name' => $form['from']['name']
@@ -73,7 +78,8 @@
                     $this->notify_admin( $formData, $formName, $notificationEmail, $from );
 
                     return array(
-                        'hasErrors' => false
+                        'hasErrors' => false,
+                        'successMessage' => $successMessage
                     ); 
                 } catch ( NestedValidationException $ex ) {
                     // print_r($ex->getMessages());

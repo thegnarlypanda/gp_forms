@@ -122,9 +122,11 @@ function Form() {
     var that = this;
 
     if (this.form) {
+        this.inputEls = this.form.querySelectorAll(".input");
         this.inputs = this.form.querySelectorAll("input");
         this.textareas = this.form.querySelectorAll("textarea");
         this.selects = this.form.querySelectorAll("select");
+        this.submitBtn = this.form.querySelector("[type=submit]");
         this.formName = this.form.getAttribute("name");
         this.form.addEventListener("submit", this.submit.bind(this), false);
 
@@ -147,6 +149,7 @@ Form.prototype.textChange = function (el) {
     } else {
         el.classList.add("is-filled");
     }
+    el.parentNode.classList.remove("is-error");
 };
 
 Form.prototype.submit = function (e) {
@@ -163,7 +166,7 @@ Form.prototype.submit = function (e) {
         if (response.hasErrors) {
             alertZone.innerHTML = "";
             that.createAlert("danger", response.mainError);
-            that.scroll(window.scrollY, that.form.offsetTop, 2);
+            that.scroll(window.scrollY, that.form.getBoundingClientRect().top + window.scrollY, 2);
 
             for (var obj in response.errors) {
                 if (response.errors[obj] !== "") {
@@ -184,11 +187,23 @@ Form.prototype.submit = function (e) {
                 fancy.classList.add("is-visible");
                 that.form.style.display = "none";
             } else {
-                that.createAlert("success", "Form submitted successfully");
-                that.scroll(window.scrollY, that.form.offsetTop, 2);
+                that.createAlert("success", response.successMessage);
+                that.hideFields();
+                that.scroll(window.scrollY, that.form.getBoundingClientRect().top + window.scrollY, 2);
             }
         }
     });
+};
+
+Form.prototype.hideFields = function () {
+    if (this.inputEls !== null) {
+        for (var i = 0; i < this.inputEls.length; i++) {
+            this.inputEls[i].classList.add('hide');
+        }
+    }
+    if (this.submitBtn !== null) {
+        this.submitBtn.classList.add('hide');
+    }
 };
 
 Form.prototype.createAlert = function (type, message) {
