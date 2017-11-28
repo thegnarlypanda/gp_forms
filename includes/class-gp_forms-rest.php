@@ -82,11 +82,14 @@
                         'successMessage' => $successMessage
                     ); 
                 } catch ( NestedValidationException $ex ) {
-                    // print_r($ex->getMessages());
+
                     $errorKey = array_keys($tmpErrors);
+                    $errors = $ex->findMessages($errorKey);
+                    $errors = $this->format_error_messages($errors);
+
                     return array (
                         'hasErrors' => true,
-                        'errors' => $ex->findMessages($errorKey),
+                        'errors' => $errors,
                         'mainError' => $errorMessage
                     );
                 }
@@ -156,6 +159,22 @@
 
         public function set_to_html() {
             return "text/html";
+        }
+
+        public function format_error_messages($errors) {
+
+            $errorsFormatted = array();
+
+            foreach ($errors as $key => $message) {
+                $pos = strpos($message, $key);
+                if ($pos !== false) {
+                    // Replace first occurrence of field name in string with 'this field'.
+                    $message = substr_replace($message, 'this field', $pos, strlen($key));
+                }
+                $errorsFormatted[$key] = ucfirst($message);
+            }
+
+            return $errorsFormatted;
         }
 
     }

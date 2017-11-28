@@ -144,12 +144,18 @@ function Form() {
 }
 
 Form.prototype.textChange = function (el) {
+
     if (el.value == "") {
         el.classList.remove("is-filled");
     } else {
         el.classList.add("is-filled");
     }
     el.parentNode.classList.remove("is-error");
+
+    var message = el.parentNode.querySelector('.input-message');
+    if (message !== null) {
+        message.innerHTML = "";
+    }
 };
 
 Form.prototype.submit = function (e) {
@@ -172,6 +178,10 @@ Form.prototype.submit = function (e) {
                 if (response.errors[obj] !== "") {
                     var tmp = document.querySelector("[name='" + obj + "']");
                     tmp.parentElement.classList.add("is-error");
+                    var messageEl = tmp.parentElement.querySelector(".input-message");
+                    if (messageEl !== null) {
+                        messageEl.innerHTML = response.errors[obj];
+                    }
                 }
             }
 
