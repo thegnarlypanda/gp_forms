@@ -65,8 +65,6 @@
                     }
                 }
 
-                // $emailValidator = Validator::email();
-
                 $formData = filter_input_array(
                     INPUT_POST,
                     $tmpFields
@@ -93,18 +91,6 @@
                         'mainError' => $errorMessage
                     );
                 }
-                
-
-                // print_r($request);
-                // return $request;
-
-
-                // try {
-                //     $emailValidator->assert($_POST['email']);
-                // } catch (NestedValidationException $ex) {
-                //     $errors = $ex->getFullMessage();
-                //     return $errors;
-                // }
             }
         }
 

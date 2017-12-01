@@ -162,35 +162,35 @@ Form.prototype.submit = function (e) {
     e.preventDefault();
     var that = this;
     this.data = new FormData(this.form);
-    // this.processFields();
     (0, _ajax2.default)({
         headers: {
             "content-type": null
         }
     }).post("/wp-json/" + nonce[0] + "/submit/" + this.formName + "?_wpnonce=" + nonce[1], this.data).always(function (response) {
-        var alertZone = that.form.querySelector(".form__alert-zone");
-        if (response.hasErrors) {
-            alertZone.innerHTML = "";
-            that.createAlert("danger", response.mainError);
-            that.scroll(window.scrollY, that.form.getBoundingClientRect().top + window.scrollY, 2);
 
-            for (var obj in response.errors) {
-                if (response.errors[obj] !== "") {
-                    var tmp = document.querySelector("[name='" + obj + "']");
-                    tmp.parentElement.classList.add("is-error");
-                    var messageEl = tmp.parentElement.querySelector(".input-message");
-                    if (messageEl !== null) {
-                        messageEl.innerHTML = response.errors[obj];
+        var alertZone = that.form.querySelector(".form__alert-zone");
+
+        if (alertZone !== null) alertZone.innerHTML = "";
+
+        if (response.hasErrors !== false) {
+
+            if (typeof response.mainError == 'undefined') {
+                that.createAlert("danger", 'An unknown error occured. Please contact us for assistance.');
+            } else {
+                that.createAlert("danger", response.mainError);
+
+                for (var obj in response.errors) {
+                    if (response.errors[obj] !== "") {
+                        var tmp = document.querySelector("[name='" + obj + "']");
+                        tmp.parentElement.classList.add("is-error");
+                        var messageEl = tmp.parentElement.querySelector(".input-message");
+                        if (messageEl !== null) {
+                            messageEl.innerHTML = response.errors[obj];
+                        }
                     }
                 }
             }
-
-            // for (var i = 0; i < response.errors.length; i++) {
-            //     that.createAlert("danger", response.errors[i]);
-            //     that.scroll(window.scrollY, that.form.offsetTop, 2);
-            // }
         } else {
-            alertZone.innerHTML = "";
 
             if (document.querySelector(".alert--fancy")) {
                 var fancy = document.querySelector(".alert--fancy");
@@ -199,9 +199,10 @@ Form.prototype.submit = function (e) {
             } else {
                 that.createAlert("success", response.successMessage);
                 that.hideFields();
-                that.scroll(window.scrollY, that.form.getBoundingClientRect().top + window.scrollY, 2);
             }
         }
+
+        that.scroll(window.scrollY, that.form.getBoundingClientRect().top + window.scrollY, 2);
     });
 };
 
@@ -218,10 +219,12 @@ Form.prototype.hideFields = function () {
 
 Form.prototype.createAlert = function (type, message) {
     var alertZone = this.form.querySelector(".form__alert-zone");
-    var alert = document.createElement("div");
-    alert.setAttribute("class", "alert alert--" + type);
-    alert.innerHTML = message;
-    alertZone.appendChild(alert);
+    if (alertZone) {
+        var alert = document.createElement("div");
+        alert.setAttribute("class", "alert alert--" + type);
+        alert.innerHTML = message;
+        alertZone.appendChild(alert);
+    }
 };
 
 Form.prototype.scroll = function (from, to, duration) {
