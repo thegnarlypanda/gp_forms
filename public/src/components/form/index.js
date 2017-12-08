@@ -51,14 +51,26 @@ Form.prototype.textChange = function (el) {
 
 Form.prototype.submit = function (e) {
     e.preventDefault();
+
+    if (this.form.classList.contains('waiting')) {
+        return;
+    }
+
+    this.submitBtn.classList.add('waiting');
+    this.form.classList.add('waiting');
+
     var that = this;
     this.data = new FormData(this.form);
+
     ajax({
         headers: {
             "content-type": null
         }
     }).post("/wp-json/" + nonce[0] + "/submit/" + this.formName + "?_wpnonce=" + nonce[1], this.data).always(function (response) {
         
+        that.submitBtn.classList.remove('waiting');
+        that.form.classList.remove('waiting');
+
         var alertZone = that.form.querySelector(".form__alert-zone");
 
         if (alertZone !== null) alertZone.innerHTML = "";
